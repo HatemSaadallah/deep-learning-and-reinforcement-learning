@@ -1,0 +1,27 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Generated artifacts
+code/**/*.png
+code/**/runs/
+code/**/checkpoints/
+code/**/wandb/
+
+# Obsidian per-machine state (keep app.json, core-plugins.json, etc.)
+RL-Vault/.obsidian/workspace*
+RL-Vault/.obsidian/cache/
+RL-Vault/.obsidian/plugins/*/data.json
+RL-Vault/.trash/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/

@@ -1,4 +1,4 @@
-"""Bandit environments. Notation matches Celli's slides:
+"""Bandit environments. Notation matches the lecture slides:
     K       number of arms
     mu_a    true mean of arm a
     mu_star = max_a mu_a

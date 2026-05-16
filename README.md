@@ -1,15 +1,15 @@
 # Deep Learning and Reinforcement Learning
 
-Study workspace for **Bocconi RL 20876** (Celli) and related deep learning topics. Combines:
-- An **Obsidian vault** (`RL-Vault/`) — concept notes, cross-linked into a knowledge graph.
+Personal study workspace for **reinforcement learning** and **deep learning**. Combines:
+- An **Obsidian vault** (`DL-DL-RL-Vault/`) — concept notes, cross-linked into a knowledge graph.
 - **Working code** (`code/`) — algorithm implementations matched to the lectures.
-- **Exam-prep proofs** (`RL-Vault/proofs/`) — full proofs for every theorem flagged as "may appear on the exam".
+- **Exam-prep proofs** (`DL-RL-Vault/proofs/`) — full proofs for every theorem flagged as "may appear on the exam".
 
 ## Structure
 
 ```
 .
-├── RL-Vault/                   # Obsidian vault
+├── DL-RL-Vault/                   # Obsidian vault
 │   ├── _meta/                  # Map of content (start here)
 │   ├── foundations/            # Hoeffding, KL, Pinsker, Yao, ...
 │   ├── online-learning/        # FTL, FTRL, FTPL, Hedge, Regret, ...
@@ -30,17 +30,17 @@ cd code/01_bandits
 python plot_regret.py            # writes regret_curves.png, regret_loglog.png
 ```
 
-The code reproduces the regret behaviors from Celli's Part 2 slides: linear regret for Uniform / FTL, $\widetilde{O}(T^{2/3})$ for ETC, $\widetilde{O}(\sqrt{KT})$ for UCB1 and Thompson Sampling.
+The code reproduces the regret behaviors from the lecture slides: linear regret for Uniform / FTL, $\widetilde{O}(T^{2/3})$ for ETC, $\widetilde{O}(\sqrt{KT})$ for UCB1 and Thompson Sampling.
 
 ## Using the Obsidian vault
 
-1. Open Obsidian → "Open folder as vault" → select `RL-Vault/`.
+1. Open Obsidian → "Open folder as vault" → select `DL-RL-Vault/`.
 2. `Ctrl+G` for the graph view.
 3. Start at `_meta/MOC - Map of Content.md`.
 
 ## Exam-prep proofs
 
-Start at `RL-Vault/proofs/INDEX.md`. Each proof is a self-contained note: statement, setup, full derivation, intuition, and "what to remember" annotations on the load-bearing steps.
+Start at `DL-RL-Vault/proofs/INDEX.md`. Each proof is a self-contained note: statement, setup, full derivation, intuition, and "what to remember" annotations on the load-bearing steps.
 
 | Topic | File |
 |---|---|
@@ -65,4 +65,4 @@ Start at `RL-Vault/proofs/INDEX.md`. Each proof is a self-contained note: statem
 
 ## Course context
 
-Bocconi University, RL 20876, taught by Andrea Celli. Reference textbook: Lattimore & Szepesvári, *Bandit Algorithms* (2020). Course covered (so far): bandits (stochastic, contextual), online learning (FTL/FTRL/MD), zero-sum games, MDPs, value iteration, policy gradients, TRPO.
+Reference textbooks: Lattimore & Szepesvári, *Bandit Algorithms* (2020); Sutton & Barto, *Reinforcement Learning: An Introduction* (2018); Goodfellow, Bengio, Courville, *Deep Learning* (2016). Topics covered: bandits (stochastic, contextual, adversarial), online learning (FTL/FTRL/MD), zero-sum games, MDPs, value iteration, policy gradients, TRPO/PPO, RLHF/DPO, plus deep-learning fundamentals.

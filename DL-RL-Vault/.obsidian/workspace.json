@@ -1,0 +1,226 @@
+{
+  "main": {
+    "id": "343f335ab9d68eff",
+    "type": "split",
+    "children": [
+      {
+        "id": "bddb2f555959ea89",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "6dfaed0a3d63df86",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "mocks/INDEX.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "INDEX"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "0de5440f0c55cb0f",
+    "type": "split",
+    "children": [
+      {
+        "id": "c5e8f60d7ff0ed6d",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "b7a840121b30cf09",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "477b65501674bdff",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "77aa21b2f880a562",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "4a9eb966fe1f2831",
+    "type": "split",
+    "children": [
+      {
+        "id": "775b3886d9caf622",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "3ff2b8a78737055b",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "mocks/INDEX.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for INDEX"
+            }
+          },
+          {
+            "id": "566a4f8fb54466d9",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "mocks/INDEX.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from INDEX"
+            }
+          },
+          {
+            "id": "c7a42065b5f0391b",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "4da9fa4e98f0635c",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "82222d77cbfc606c",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "mocks/INDEX.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of INDEX"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "6dfaed0a3d63df86",
+  "lastOpenFiles": [
+    "online-learning/sedSXOqJQ",
+    "online-learning/sedCmF3fF",
+    "online-learning/sedpj4CNV",
+    "foundations/sedrSMWsZ",
+    "foundations/sedqZ8XRa",
+    "proofs/sedzUqIRT",
+    "proofs/sedFhFKAA",
+    "proofs/sediqgXxJ",
+    "proofs/sedK6O8F9",
+    "proofs/sedcVHwFw",
+    "mocks/sedc7e5wK",
+    "mocks/Cheat Sheet.md",
+    "mocks/2025-03 DL Mock.md",
+    "Cheat Sheet.md",
+    "mocks/INDEX.md",
+    "mocks/2024-05 RL Final Exam.md",
+    "foundations/Clean Event.md",
+    "mdp/RLHF and DPO.md",
+    "mdp/PPO and GRPO.md",
+    "foundations/Nash Equilibrium.md",
+    "mdp/REINFORCE and Actor-Critic.md",
+    "mdp/Deep Policy Evaluation.md",
+    "mdp/Exploration in RL.md",
+    "foundations/Martingales and Bernstein.md",
+    "mdp/Q-learning.md",
+    "foundations/Convexity.md",
+    "bandits/UCB1.md",
+    "mdp/Policy Iteration.md",
+    "mdp/Value Iteration.md",
+    "mdp/Bellman Equations.md",
+    "mdp/Markov Decision Process.md",
+    "bandits/Thompson Sampling.md",
+    "foundations/Smoothness.md",
+    "online-learning/Optimistic FTRL.md",
+    "proofs/Regret and Equilibria.md",
+    "proofs/OGD Regret Bound.md",
+    "Untitled.canvas"
+  ]
+}

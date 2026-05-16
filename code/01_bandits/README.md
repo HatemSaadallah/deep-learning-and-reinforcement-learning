@@ -1,6 +1,6 @@
 # Stage 1: Stochastic bandits
 
-Reproduces the regret behaviors from the Bocconi RL Part 2 lecture:
+Reproduces the regret behaviors from the stochastic-bandits lecture:
 - **Uniform / FTL** → linear regret
 - **ETC** → $\widetilde{O}(T^{2/3})$
 - **UCB1 / Thompson Sampling** → $\widetilde{O}(\sqrt{KT})$, matching the [[Bandit Lower Bound]]

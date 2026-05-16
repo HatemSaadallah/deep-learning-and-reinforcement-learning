@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Cheat Sheet.md",
+                "file": "dl/Transformers Biology.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Cheat Sheet"
+              "title": "Transformers Biology"
             }
           }
         ]
@@ -185,6 +185,8 @@
   },
   "active": "6dfaed0a3d63df86",
   "lastOpenFiles": [
+    "dl/Transformer.md",
+    "Cheat Sheet.md",
     "_meta/MOC - Map of Content.md.tmp.47571.5af87a354daf",
     "rl/INDEX.md",
     "rl/INDEX.md.tmp.47571.0b5793a4d8a1",
@@ -213,14 +215,12 @@
     "rl/proofs/ETC Regret Analysis.md",
     "rl/proofs",
     "rl/online-learning/Regret.md",
-    "rl/online-learning/Optimistic FTRL.md",
     "rl/online-learning",
     "rl/foundations",
     "rl/bandits",
     "rl/deep-rl",
     "rl",
     "_meta/MOC - Map of Content.md.tmp.47571.0d8a64c6f0b7",
-    "dl/INDEX.md.tmp.47571.78b2b26dbc7a",
     "Untitled.canvas"
   ]
 }

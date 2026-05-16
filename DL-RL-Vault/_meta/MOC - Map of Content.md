@@ -1,10 +1,11 @@
 # Map of Content (MOC)
 
-Top-level entry point into the vault. Use the graph view (`Ctrl+G`) to see the live structure.
+Top-level entry point into the vault. Two halves: deep learning and reinforcement learning, each with its own folder index. Use the graph view (`Ctrl+G`) to see the live structure.
 
-## Deep Learning
+## Deep Learning — `dl/`
 
-→ [[dl/INDEX|DL folder index]]
+→ [[dl/INDEX|DL folder index]] (full breakdown)
+
 - [[Neural Network Fundamentals]] — backprop, loss, MLE, UAT
 - [[Optimisation]] — SGD, Adam(W), schedules, loss landscape
 - [[Initialisation]] — Xavier/He, vanishing/exploding gradients
@@ -21,109 +22,79 @@ Top-level entry point into the vault. Use the graph view (`Ctrl+G`) to see the l
 
 ---
 
-## Foundations (RL / theory)
+## Reinforcement Learning — `rl/`
 
-- [[Online Learning]]
-- [[Regret]]
-- [[Convexity]]
-- [[Hoeffding Inequality]]
-- [[Martingales and Bernstein]]
-- [[Clean Event]]
-- [[KL Divergence]]
-- [[Pinskers Inequality]]
-- [[Yaos Principle]]
-- [[Bregman Divergence]]
-- [[Three-point Equality]]
-- [[Euclidean Mirror Descent Lemma]]
-- [[Exp-Concavity]]
-- [[Smoothness]]
-- [[Optimism Principle]]
-- [[Nash Equilibrium]]
+→ [[rl/INDEX|RL folder index]] (full breakdown)
 
-## Online learning algorithms
+### Foundations (`rl/foundations/`)
 
-- [[Online Convex Optimization]] *(framework hub)*
-- [[Follow the Leader]]
-- [[Follow the Regularized Leader]]
-- [[Follow the Perturbed Leader]]
-- [[Optimistic FTRL]] — $O(1/T)$ in self-play
-- [[Hedge - Multiplicative Weights]]
-- [[Online Ridge Regression]] — recursive least squares
-- [[Online Logistic Regression]]
-- [[Adversarial Expert Problem]]
+- [[Hoeffding Inequality]] · [[Martingales and Bernstein]] · [[Clean Event]]
+- [[KL Divergence]] · [[Pinskers Inequality]] · [[Yaos Principle]]
+- [[Convexity]] · [[Bregman Divergence]] · [[Three-point Equality]]
+- [[Euclidean Mirror Descent Lemma]] · [[Exp-Concavity]] · [[Smoothness]]
+- [[Optimism Principle]] · [[Nash Equilibrium]]
 
-## Bandits
+### Online learning (`rl/online-learning/`)
 
-- [[Stochastic Bandits]] *(stochastic hub)*
-- [[Sub-optimality Gap]]
-- [[Regret Decomposition Lemma]]
-- [[Epsilon-Greedy]]
-- [[Explore-Then-Commit]]
-- [[UCB1]]
-- [[Thompson Sampling]]
-- [[Best-Arm Identification]]
-- [[Bandit Lower Bound]]
-- [[Adversarial Bandits]] *(adversarial hub)*
-- [[Adversarial Expert Problem]] — full-info adversarial
-- [[EXP3]]
-- [[Contextual Bandit]] — bridge to RL
-- [[LinUCB]]
+- [[Online Learning]] · [[Regret]] · [[Online Convex Optimization]]
+- [[Follow the Leader]] · [[Follow the Regularized Leader]] · [[Follow the Perturbed Leader]]
+- [[Hedge - Multiplicative Weights]] · [[Optimistic FTRL]]
+- [[Online Ridge Regression]] · [[Online Logistic Regression]] · [[Adversarial Expert Problem]]
 
-## Exam proofs
+### Bandits (`rl/bandits/`)
 
-→ [[INDEX|Proofs index]] (the 10–12 listed as potential exam open questions).
-- [[OGD Regret Bound]]
-- [[ETC Regret Analysis]]
-- [[UCB Analysis]] — instance-dep and instance-indep
-- [[FTRL Stability and Regret]]
-- [[Mirror Descent Analysis]] — general + OMD on simplex
-- [[Lipschitz Contextual Bandits Proof]]
-- [[Regret and Equilibria]]
-- [[Markov Policies Suffice]]
-- [[VI Generative Setting]]
-- [[Policy Gradient Theorem]]
-- [[TRPO Surrogate Objective]]
+- **Stochastic:** [[Stochastic Bandits]] · [[Sub-optimality Gap]] · [[Regret Decomposition Lemma]] · [[Epsilon-Greedy]] · [[Explore-Then-Commit]] · [[UCB1]] · [[Thompson Sampling]] · [[Best-Arm Identification]] · [[Bandit Lower Bound]]
+- **Adversarial:** [[Adversarial Bandits]] · [[EXP3]]
+- **Contextual / linear:** [[Contextual Bandit]] · [[LinUCB]]
 
-## Mock exams
+### MDP planning (`rl/mdp/`)
 
-→ [[INDEX|Mocks index]]
+- [[Markov Decision Process]] · [[Bellman Equations]]
+- [[Value Iteration]] · [[Policy Iteration]]
+- [[Q-learning]] · [[Exploration in RL]]
+
+### Deep RL (`rl/deep-rl/`)
+
+- [[Deep Policy Evaluation]] · [[REINFORCE and Actor-Critic]] · [[PPO and GRPO]] · [[RLHF and DPO]]
+
+### Exam-prep proofs (`rl/proofs/`)
+
+→ [[rl/proofs/INDEX|Proofs index]]
+
+[[OGD Regret Bound]] · [[ETC Regret Analysis]] · [[UCB Analysis]] · [[FTRL Stability and Regret]] · [[Mirror Descent Analysis]] · [[Lipschitz Contextual Bandits Proof]] · [[Regret and Equilibria]] · [[Markov Policies Suffice]] · [[VI Generative Setting]] · [[Policy Gradient Theorem]] · [[TRPO Surrogate Objective]]
+
+---
+
+## Mock exams — `mocks/`
+
+→ [[mocks/INDEX|Mocks index]]
 - [[2024-05 RL Final Exam]] — full RL final, 16 questions, 31 pts
 - [[2025-03 DL Mock]] — DL-only mock, 13 questions, 31 pts
 - [[Cheat Sheet]] — full-course concept map (handwritten reference)
 
-## Course timeline
+## To write (stubs)
 
-- ✅ **Part 2** (2026-03-27): Stochastic bandits — ETC, $\Omega(\sqrt{KT})$ lower bound. See [[Stochastic Bandits]].
-- ⏳ **Part 3** (next): UCB — closes the gap.
-
-## MDPs and Planning
-
-- [[Markov Decision Process]] *(setting hub)*
-- [[Bellman Equations]]
-- [[Value Iteration]]
-- [[Policy Iteration]]
-- [[Q-learning]] — model-free incremental VI
-- [[Exploration in RL]] — UCB-VI + Q-learning-UCB
-
-## Deep RL
-
-- [[Deep Policy Evaluation]] — MC, TD, k-step TD, stop-gradient
-- [[REINFORCE and Actor-Critic]] — A2C/A3C family
-- [[PPO and GRPO]] — trust-region policy optimization
-- [[RLHF and DPO]] — RL for LLM alignment
-
-## To write (stubs — make a note when you study these)
-
-- [[Online Gradient Descent]]
-- [[Mirror Descent]]
-- [[Self-Play and Game-Theoretic RL]]
-- [[SARSA]]
-- KL-UCB
-- Contextual Thompson Sampling
+- [[Online Gradient Descent]] · [[Mirror Descent]] · [[Self-Play and Game-Theoretic RL]] · [[SARSA]] · KL-UCB · Contextual Thompson Sampling
 
 ## Conventions
 
 - One concept per file. Filename = concept name.
-- Liberal `[[wikilinks]]` — broken links are fine, they're TODOs.
+- Liberal `[[wikilinks]]` — links resolve by note name (not path), so moves don't break them.
 - Tag with `#topic-area` for filtering.
 - Math in `$ ... $` (inline) or `$$ ... $$` (block).
+
+## Folder layout
+
+```
+DL-RL-Vault/
+├── _meta/          (MOC)
+├── dl/             (14 deep-learning notes)
+├── rl/
+│   ├── foundations/    (math + meta-principles)
+│   ├── online-learning/
+│   ├── bandits/
+│   ├── mdp/            (tabular planning)
+│   ├── deep-rl/        (PPO, RLHF, actor-critic)
+│   └── proofs/         (exam-prep)
+└── mocks/          (practice exams + cheat sheet)
+```

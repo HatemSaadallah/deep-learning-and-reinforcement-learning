@@ -38,10 +38,16 @@ The critical distinction from full RL: **actions don't influence the next contex
 
 ## Algorithms
 
-- [[LinUCB]] — UCB1 generalized to linear payoffs. Regret $\widetilde{O}(\sqrt{dT})$.
+- **Small $|\mathcal{X}|$:** run a separate [[UCB1]] per context. Regret $O(\sqrt{KT|\mathcal{X}| \log T})$ — useless when $|\mathcal{X}|$ is large.
+- **Lipschitz contexts:** $\epsilon$-net discretization + UCB per cell. Regret $\widetilde{O}(T^{(d+1)/(d+2)})$. See [[Lipschitz Contextual Bandits Proof]].
+- **Linear / stochastic linear bandits:** $\mu(x, a) = \langle \theta_a, x\rangle$. Algorithm: [[LinUCB]] with confidence ellipsoid $\|\theta - \hat\theta_t\|_{M_t} \leq \beta_t$. Regret $\widetilde{O}(d\sqrt{T})$ — *independent of $|\mathcal{A}|$ and $|\mathcal{X}|$*.
 - **Contextual Thompson Sampling** — Gaussian posterior over $\theta_a$, sample-and-act-greedy.
 - **Neural contextual bandits** — replace linear with NN, do TS via dropout / ensembles. What real recommender systems run.
 - **Epoch-greedy / explore-then-exploit** — contextual analogue of [[Explore-Then-Commit]].
+
+## Stochastic linear bandits ≡ linear contextual bandits
+
+In **stochastic linear bandits**, the action set $A_t \subset \mathbb{R}^d$ may change each round, but the reward is always $\ell_t = \langle a_t, \theta^*\rangle + \epsilon_t$. If we identify "context = action set" or "action = (context, choice)", this is exactly the linear contextual bandit. Both literatures use the same algorithm ([[LinUCB]]) and the same analysis (confidence ellipsoid via [[KL Divergence|self-normalized concentration]]).
 
 ## Canonical application
 

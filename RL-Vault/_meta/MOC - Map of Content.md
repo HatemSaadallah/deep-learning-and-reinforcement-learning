@@ -8,6 +8,7 @@ Top-level entry point into the vault. Use the graph view (`Ctrl+G`) to see the l
 - [[Regret]]
 - [[Convexity]]
 - [[Hoeffding Inequality]]
+- [[Martingales and Bernstein]]
 - [[Clean Event]]
 - [[KL Divergence]]
 - [[Pinskers Inequality]]
@@ -16,7 +17,9 @@ Top-level entry point into the vault. Use the graph view (`Ctrl+G`) to see the l
 - [[Three-point Equality]]
 - [[Euclidean Mirror Descent Lemma]]
 - [[Exp-Concavity]]
+- [[Smoothness]]
 - [[Optimism Principle]]
+- [[Nash Equilibrium]]
 
 ## Online learning algorithms
 
@@ -24,13 +27,15 @@ Top-level entry point into the vault. Use the graph view (`Ctrl+G`) to see the l
 - [[Follow the Leader]]
 - [[Follow the Regularized Leader]]
 - [[Follow the Perturbed Leader]]
+- [[Optimistic FTRL]] — $O(1/T)$ in self-play
 - [[Hedge - Multiplicative Weights]]
 - [[Online Ridge Regression]] — recursive least squares
 - [[Online Logistic Regression]]
+- [[Adversarial Expert Problem]]
 
 ## Bandits
 
-- [[Stochastic Bandits]] *(main hub)*
+- [[Stochastic Bandits]] *(stochastic hub)*
 - [[Sub-optimality Gap]]
 - [[Regret Decomposition Lemma]]
 - [[Epsilon-Greedy]]
@@ -39,6 +44,9 @@ Top-level entry point into the vault. Use the graph view (`Ctrl+G`) to see the l
 - [[Thompson Sampling]]
 - [[Best-Arm Identification]]
 - [[Bandit Lower Bound]]
+- [[Adversarial Bandits]] *(adversarial hub)*
+- [[Adversarial Expert Problem]] — full-info adversarial
+- [[EXP3]]
 - [[Contextual Bandit]] — bridge to RL
 - [[LinUCB]]
 
@@ -62,18 +70,23 @@ Top-level entry point into the vault. Use the graph view (`Ctrl+G`) to see the l
 - ✅ **Part 2** (2026-03-27, Celli): Stochastic bandits — ETC, $\Omega(\sqrt{KT})$ lower bound. See [[Stochastic Bandits]].
 - ⏳ **Part 3** (next): UCB — closes the gap.
 
+## MDPs and Planning
+
+- [[Markov Decision Process]] *(setting hub)*
+- [[Bellman Equations]]
+- [[Value Iteration]]
+- [[Policy Iteration]]
+- [[Q-learning]] — model-free incremental VI
+- [[Exploration in RL]] — UCB-VI + Q-learning-UCB
+
 ## To write (stubs — make a note when you study these)
 
 - [[Online Gradient Descent]]
 - [[Mirror Descent]]
-- [[Adversarial Bandits]]
 - [[Self-Play and Game-Theoretic RL]]
 - [[PPO]]
 - [[TRPO]]
-- [[Q-learning]] — explained in chat 2026-05-16, not yet written
 - [[SARSA]]
-- UCB1 (Upper Confidence Bound) — implemented in `code/01_bandits/`
-- Thompson Sampling — implemented in `code/01_bandits/`
 - KL-UCB
 - Contextual Thompson Sampling
 

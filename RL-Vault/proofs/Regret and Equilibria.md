@@ -74,8 +74,21 @@ For general-sum games, no-regret learning converges to the *coarse correlated eq
 - **Two regret guarantees + minimax = $\epsilon$-Nash.** The proof is essentially algebraic: add the two inequalities, the cross-term cancels.
 - **Practical takeaway:** to solve a zero-sum game (poker, security games, robust optimization), run any no-regret algorithm against itself and average the iterates. This is the recipe behind CFR (Counterfactual Regret Minimization) for poker.
 
+## Faster convergence via optimism
+
+Vanilla no-regret algorithms (Hedge, FTRL) give $R_T = O(\sqrt{T})$, so $\gamma(\bar x_T, \bar y_T) = O(1/\sqrt{T})$.
+
+**[[Optimistic FTRL]]** uses a prediction $m_t \approx \ell_t$ to anticipate the next loss. In self-play in a zero-sum game, both players' losses depend on each other's strategies, which change slowly when the dynamics are stable — so $\ell_t \approx \ell_{t-1}$ is a good prediction. The **RVU property** (Syrgkanis et al. 2015) then gives
+$$R_T^{(1)} + R_T^{(2)} = O(1),$$
+which by the reduction above gives
+$$\gamma(\bar x_T, \bar y_T) = O(1/T).$$
+
+This is a quadratic improvement over vanilla no-regret dynamics, and matches the convergence rate of much more structured algorithms (e.g. extragradient).
+
 ## See also
 
 - [[Regret]] — the quantity being bounded.
+- [[Nash Equilibrium]] — the target.
 - [[Hedge - Multiplicative Weights]] — the canonical no-regret algorithm.
+- [[Optimistic FTRL]] — gets $O(1/T)$ in self-play.
 - [[Follow the Regularized Leader]] / [[Mirror Descent Analysis]] — algorithm families with sublinear regret.

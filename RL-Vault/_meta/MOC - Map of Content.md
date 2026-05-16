@@ -6,17 +6,25 @@ Top-level entry point into the vault. Use the graph view (`Ctrl+G`) to see the l
 
 - [[Online Learning]]
 - [[Regret]]
+- [[Convexity]]
 - [[Hoeffding Inequality]]
 - [[KL Divergence]]
 - [[Pinskers Inequality]]
 - [[Yaos Principle]]
+- [[Bregman Divergence]]
+- [[Three-point Equality]]
+- [[Euclidean Mirror Descent Lemma]]
+- [[Exp-Concavity]]
 
 ## Online learning algorithms
 
+- [[Online Convex Optimization]] *(framework hub)*
 - [[Follow the Leader]]
 - [[Follow the Regularized Leader]]
 - [[Follow the Perturbed Leader]]
 - [[Hedge - Multiplicative Weights]]
+- [[Online Ridge Regression]] — recursive least squares
+- [[Online Logistic Regression]]
 
 ## Bandits
 

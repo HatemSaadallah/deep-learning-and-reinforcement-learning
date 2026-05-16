@@ -60,8 +60,20 @@ $$R_T \leq \frac{D^2}{2} \cdot \frac{G\sqrt{T}}{D} + \frac{D}{G\sqrt{T}} \cdot \
 - **Anytime version:** if $T$ unknown, take $\eta_t = D/(G\sqrt{t})$, regret still $O(DG\sqrt{T})$ (up to a constant).
 - **OGD is a special case of [[Follow the Regularized Leader|FTRL]]** with $R(x) = \tfrac{1}{2}\|x\|^2$ and of [[Mirror Descent Analysis|mirror descent]] with the same regularizer.
 
+## Lecture-style variant of the proof (Celli, slides 26–28)
+
+Celli's intro lecture proves the same theorem via two **named lemmas**:
+
+1. **[[Three-point Equality]]** specialized to $R(x) = \tfrac12\|x\|_2^2$ (i.e. the parallelogram-law identity).
+2. **[[Euclidean Mirror Descent Lemma]]** — the one-step inequality $\langle g_t, \theta_t - \theta^*\rangle \leq \tfrac{1}{2\eta}(\|\theta_t - \theta^*\|^2 - \|\theta_{t+1} - \theta^*\|^2) + \tfrac{\eta}{2}\|g_t\|^2$.
+
+The direct telescoping above (Steps 1–3) **is** the Euclidean MD lemma in disguise. If the exam asks "prove the regret of OGD using the Euclidean MD lemma", cite the lemma, sum its conclusion over $t$, telescope the first sum to get $R^2/(2\eta)$, and bound the second by $\eta L^2 T / 2$. Same end result, presented in the form Celli expects.
+
+The lecture states the bound with $R$ = radius of a ball $B(\theta_1, R)$ containing $\mathcal{C}$ (rather than the diameter $D$), and uses $L$ for the gradient bound (instead of $G$). Optimizing $\eta = R/(L\sqrt{T})$ gives $R_T \leq RL\sqrt{T}$ — same rate, slightly different constants.
+
 ## See also
 
 - [[Follow the Regularized Leader]] — the general framework OGD lives in.
 - [[Mirror Descent Analysis]] — same proof template with Bregman divergences.
+- [[Three-point Equality]] / [[Euclidean Mirror Descent Lemma]] — the named lemmas Celli uses.
 - [[Regret]] — the quantity being bounded.

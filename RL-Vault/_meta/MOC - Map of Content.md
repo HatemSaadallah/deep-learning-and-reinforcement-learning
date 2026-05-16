@@ -79,13 +79,18 @@ Top-level entry point into the vault. Use the graph view (`Ctrl+G`) to see the l
 - [[Q-learning]] — model-free incremental VI
 - [[Exploration in RL]] — UCB-VI + Q-learning-UCB
 
+## Deep RL
+
+- [[Deep Policy Evaluation]] — MC, TD, k-step TD, stop-gradient
+- [[REINFORCE and Actor-Critic]] — A2C/A3C family
+- [[PPO and GRPO]] — trust-region policy optimization
+- [[RLHF and DPO]] — RL for LLM alignment
+
 ## To write (stubs — make a note when you study these)
 
 - [[Online Gradient Descent]]
 - [[Mirror Descent]]
 - [[Self-Play and Game-Theoretic RL]]
-- [[PPO]]
-- [[TRPO]]
 - [[SARSA]]
 - KL-UCB
 - Contextual Thompson Sampling

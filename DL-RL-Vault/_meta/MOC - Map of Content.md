@@ -2,7 +2,26 @@
 
 Top-level entry point into the vault. Use the graph view (`Ctrl+G`) to see the live structure.
 
-## Foundations
+## Deep Learning
+
+→ [[dl/INDEX|DL folder index]]
+- [[Neural Network Fundamentals]] — backprop, loss, MLE, UAT
+- [[Optimisation]] — SGD, Adam(W), schedules, loss landscape
+- [[Initialisation]] — Xavier/He, vanishing/exploding gradients
+- [[Regularisation]] — L2, dropout, BN/LN, data aug, implicit
+- [[Overparameterisation]] — double descent, NTK, scaling laws
+- [[Transformer]] — self-attention backbone
+- [[Transformers Biology]] — ESM, AlphaFold, DNA models
+- [[GNNs]] — message-passing graph nets
+- [[Unsupervised Learning]] — pretraining paradigms
+- [[VAEs]] — variational autoencoders
+- [[GANs]] — generative adversarial nets
+- [[Diffusion Models]] — DDPM, score-based, latent diffusion
+- [[Mixed DL Techniques]] — practical recipes
+
+---
+
+## Foundations (RL / theory)
 
 - [[Online Learning]]
 - [[Regret]]

@@ -185,6 +185,7 @@
   },
   "active": "6dfaed0a3d63df86",
   "lastOpenFiles": [
+    "_meta/MOC - Map of Content.md.tmp.47571.0d8a64c6f0b7",
     "dl/INDEX.md",
     "dl/INDEX.md.tmp.47571.78b2b26dbc7a",
     "dl/Mixed DL Techniques.md",
@@ -220,7 +221,6 @@
     "mdp/Deep Policy Evaluation.md",
     "mdp/Exploration in RL.md",
     "foundations/Martingales and Bernstein.md",
-    "mdp/Q-learning.md",
     "Untitled.canvas"
   ]
 }

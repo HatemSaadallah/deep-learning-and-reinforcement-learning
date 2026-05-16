@@ -1,93 +1,212 @@
-# Overparameterisation
+# Performance and Overparameterisation
 
 **Tags:** #dl #theory
+**Source:** Lecture 7 (Tangherloni) — "Performance and overparameterisation"
 
-Modern deep nets have **far more parameters than training examples** ($D \gg N$). Classical statistical learning theory predicts this should **overfit catastrophically**. In practice these networks **generalise extremely well**. The mismatch motivated a new theoretical framework: the **overparameterisation regime**.
+Modern deep networks have **far more parameters than training examples** ($D \gg N$) and yet **generalise extremely well**. Understanding this requires examining bias, variance, the **double descent phenomenon**, and the role of **implicit regularisation**.
 
-## Classical bias-variance vs. modern double descent
+## Lecture outline
 
-The classical curve: as model capacity increases, training loss decreases monotonically, test loss first decreases (lower bias) then increases (higher variance) — the famous **U-shape**.
+1. Noise, bias, and variance
+2. Double descent
+3. Overparameterised networks
+4. Choosing hyperparameters
 
-The modern phenomenon: as model capacity continues to increase past the **interpolation threshold** (the point where training loss hits zero), test loss **decreases again** — sometimes below its first minimum!
+## Three causes of test error
+
+An NN often performs (almost) perfectly on training data — this **does not mean it generalises**. Test errors have three distinct sources:
+
+1. **Inherent uncertainty in the task** — irreducible noise in the data-generating process.
+2. **Amount of training data** — too little data → high variance.
+3. **Choice of model** (architecture + hyperparameters) — determines bias and capacity.
+
+## MNIST-1D — the running example
+
+A 1D version of MNIST used throughout the lecture:
+- $x_i \in \mathbb{R}^{40}$ — horizontal offsets at 40 positions.
+- 10 classes (digits 0–9).
+- Templates randomly transformed + Gaussian noise → training set.
+
+**Setup:** 2-hidden-layer MLP with $D = 100$ units, softmax output, multi-class cross-entropy, SGD with batch size 100, learning rate $0.1$, 6000 steps (150 epochs).
+
+**Result:** training error → 0, but **test error stays high** — the model has not generalised.
+
+## Bias-variance decomposition
+
+In 1D regression, additive noise has variance $\sigma^2$:
+$$y = \mu[x] + \varepsilon, \quad \varepsilon \sim \mathcal{N}(0, \sigma^2).$$
+
+The **expected test loss** decomposes into three additive components:
+
+| Source | Description |
+|---|---|
+| **Noise** ($\sigma^2$) | Inherent uncertainty in data generation. **Irreducible.** Multiple valid outputs for each input. |
+| **Bias** | Systematic deviation from the mean of the function we are modelling — **due to model limitations** (not flexible enough). |
+| **Variance** | Uncertainty in the fitted model **due to choice of training set**. Different training sets → slightly different results. |
+
+$$\mathbb{E}[\text{test error}] \;=\; \sigma^2 + \text{bias}^2 + \text{variance}.$$
+
+## The classical bias-variance trade-off
+
+Classical story: increase model capacity →
+- **Bias decreases** (more flexible model).
+- **Variance increases** (more sensitive to training data).
+
+Plot: test error as a U-shape — first decreases (bias dominates), then increases (variance dominates). Optimal capacity at the bottom of the U.
+
+## Double descent
+
+**Modern observation:** continue increasing capacity past the U-shape's minimum, and a **second descent** appears.
 
 ```
-Test loss
+test error
    ▲
-   │
-   │     U-shape          \    SECOND DESCENT
-   │     (classical)       \   (modern overparameterised)
-   │  ___                   \_______________
-   │ /   \  (peak)            (interpolation
-   │/     \                    threshold)
-   └────────┴────────────────────────────────────► capacity
-            ↑ N
+   │  ╱╲   ← classical U-shape
+   │ ╱  ╲      peak at interpolation threshold
+   │     ╲    ╱─────── second descent
+   │      ╲╱
+   └─────────────────────────────► capacity
+   underparameterised  ↑  overparameterised
+                       interpolation threshold
+                       (training error = 0)
 ```
 
-**Double descent** (Belkin et al. 2019; Nakkiran et al. 2020) explains why modern practice — train extremely large models — works.
+**Three regimes:**
+1. **Classical / under-parameterised regime** — bias-variance trade-off, classical U.
+2. **Critical regime** — at the **interpolation threshold**: the model has *just enough* capacity to perfectly fit (interpolate) the training data — training error is zero, **test error peaks**.
+3. **Modern / over-parameterised regime** — past the interpolation threshold, **test error decreases again**, sometimes below the first minimum.
 
-## Why does overfitting fail to happen?
+### Two phenomena combined
 
-The "deep learning generalisation puzzle". Several non-mutually-exclusive explanations:
+Double descent results from interaction of:
+- **Bias-variance trade-off** (first descent + the peak).
+- **Improvement past interpolation** (second descent) — test performance continues to improve along with capacity even after training error is perfect. **Why?**
 
-### 1. Implicit regularisation of SGD
+## Inductive bias
 
-Among all global minimisers (which exist in abundance for overparameterised models), SGD prefers **flat ones**:
-- Flat minima have wide basins, are robust to weight perturbations.
-- Flat minima correspond to **simple functions** in the bias-variance sense.
-- Sharp minima generalise poorly (Keskar et al. 2017).
+Once the model has enough capacity to obtain training loss $\approx 0$, it fits the training data near-perfectly. **Further capacity cannot improve training fit.** Any change must occur **between training points**.
 
-### 2. Neural Tangent Kernel (NTK)
+**Inductive bias** = the tendency of a model to **prioritise one solution over another** when extrapolating between data points.
 
-In the infinite-width limit, a NN trained with gradient descent behaves like a **kernel regression** with a specific kernel (the NTK, Jacot et al. 2018) — and kernel regression has well-understood generalisation theory. The NTK regime explains *some* behaviors but **does not capture feature learning**.
+**Inductive bias determines how NNs interpolate between data points.**
 
-### 3. Lottery Ticket Hypothesis (Frankle & Carbin 2019)
+**Example: CNNs vs fully connected.** Same number of parameters; CNNs perform far better on images because their inductive bias is right for image data (translation equivariance, locality, weight sharing).
 
-A randomly-initialised dense network contains **sparse subnetworks** ("winning tickets") that, when trained in isolation, reach comparable accuracy. The overparameterised dense network is essentially a "search container" for finding good sparse functions.
+## Curse of dimensionality
 
-### 4. Architectural inductive biases
+The model's behaviour between data points is **critical** because in high-dimensional space, **training data is extremely sparse**.
 
-- **CNNs** are biased toward translation-equivariant functions.
-- **Transformers** are biased toward "long-range pattern matching" through attention.
-- **Residual connections** bias toward functions close to identity.
+**MNIST-1D example:** 40 dimensions, 10,000 samples. Quantize each dimension into 10 bins → $10^{40}$ bins total. With $10^5$ samples, there's only **1 point per $10^{35}$ bins**.
 
-These priors restrict the *effective* hypothesis class far below the parameter count.
+**Definition.** The tendency of high-dimensional space to overwhelm the number of data points is the **curse of dimensionality**. In high dimensions there are **small regions of data with significant gaps between them**.
 
-## The interpolation threshold
+## Why does double descent happen? — putative explanation
 
-The point where training loss = 0. Past this, the **training loss can't decrease further** but the **model can still change** (gradient descent moves through the zero-loss manifold). The choice of which zero-loss solution to settle on is what determines test performance.
+As we add capacity to the model, it **interpolates between the nearest data points increasingly smoothly**.
 
-For classification, this corresponds to the minimum-margin classifier (Soudry et al. 2018). For regression, the minimum-norm interpolant. These have known generalisation properties.
+**At the interpolation threshold:** the model has *just enough* capacity to fit the training data exactly — but **must contort itself**, resulting in erratic predictions. This explains why the **peak is so pronounced**.
 
-## Practical implications
+**Past the threshold:** extra capacity allows the model to interpolate smoothly even through sparse data — but **smooth interpolations generalise better**.
 
-1. **Larger models often generalise better** — explicit in scaling laws (Kaplan et al. 2020; Hoffmann et al. 2022 / Chinchilla).
-2. **Don't fear training to zero training loss** — common pre-modern advice to "stop before overfitting" is mostly wrong for big models.
-3. **Architecture and optimiser choices matter more than parameter count** — same $D$ with different inductive biases yields very different generalisation.
+## Why smoothness? (the open question)
 
-## Scaling laws
+All curves that pass through the training data have zero training loss. **Why does the network prefer smooth ones?**
 
-For LLMs (Kaplan et al. 2020):
-$$L(N, D) \approx L_\infty + \frac{a}{N^{\alpha_N}} + \frac{b}{D^{\alpha_D}}$$
-where $N$ = model params, $D$ = dataset tokens. Empirical exponents $\alpha_N \approx 0.34, \alpha_D \approx 0.28$.
+Three (uncertain) explanations:
+1. **Network initialisation might encourage smoothness** — random-init functions tend to be smooth.
+2. **The training algorithm "prefers" to converge to smooth functions** — implicit bias of SGD.
+3. **The architecture's inductive bias** — e.g. CNNs implicitly favor translation-invariant functions.
 
-**Chinchilla (Hoffmann et al. 2022)** revised: should scale $N$ and $D$ in roughly equal proportion. For a fixed compute budget $C \approx 6 N D$, the optimal allocation has $N \propto C^{0.5}$ and $D \propto C^{0.5}$ (rather than the earlier $N$-heavy split).
+> Any factor that biases a solution towards a subset of equivalent solutions is known as a **regulariser**. **The training algorithm acts as an implicit regulariser.**
 
-These scaling laws underpin the entire LLM-scaling era of deep learning.
+See [[Regularisation]] for explicit vs implicit regularisation.
 
-## Saddle points are *not* the obstacle
+## Implicit regularisation in over-parameterised NNs
 
-In low dim, NN training looked stuck at saddle points (random matrix arguments). In practice:
-- SGD noise pushes off saddles easily.
-- Many "saddles" are actually **strict saddles** (have at least one direction with strictly negative curvature) — easily escapable.
+- Training algorithm can act as an implicit regulariser.
+- **Extra model capacity describes areas with no training data** — these are where overparameterisation matters.
+- **Regularisation favours smooth interpolation** between nearby points.
+- Network initialisation may encourage smoothness.
+- Training algorithm tends to converge to smooth functions.
 
-## Open questions
+## Weird properties of high-dimensional space
 
-- **Why does NTK regime fail to capture feature learning?** ML researchers' current best theory of training dynamics still misses what makes deep nets actually useful.
-- **Can we predict generalisation from training dynamics?** Tools like sharpness, NTK trajectory, "training as compression" are partial answers.
-- **What's the right notion of "complexity" for an over-parameterised model?** Parameter count is the wrong proxy. Norm-based bounds (Bartlett, Foster, Telgarsky) are tighter but still loose.
+Two randomly sampled data points from a standard normal distribution are very **close to orthogonal** to one another (relative to the origin) **with high probability**.
+
+This and related geometric facts mean that intuitions from 2D / 3D don't transfer — high-dim space is mostly empty, distances concentrate, random directions are nearly orthogonal.
+
+## Theoretical foundations — Bubeck & Sellke 2021
+
+*"A Universal Law of Robustness via Isoperimetry"*
+
+**Smooth interpolation in $D$ dimensions requires $D$ times more parameters than mere interpolation.**
+
+A trade-off exists between:
+- **Number of parameters**
+- **Lipschitz constant** (maximum rate of output change for small input changes)
+
+**Implication:** current models for large datasets **may not be overparameterised enough**. Further increasing model capacity could be key to improving performance.
+
+This formalises the "more parameters help" intuition behind the modern scaling-law era.
+
+## Choosing hyperparameters
+
+Deep NNs have **many** hyperparameters:
+- Number of hidden layers, units per layer.
+- Loss function.
+- Optimisation algorithm + its parameters (learning rate, momentum, ...).
+- Architectural choices.
+
+**We don't have access to bias or variance** directly:
+- Bias requires knowing the true function.
+- Variance requires multiple independent datasets.
+
+There's no way to tell a priori how much capacity is enough.
+
+### The empirical approach (and the role of a validation set)
+
+Hyperparameters are chosen empirically:
+1. Train many models with different hyperparameters on the **training set**.
+2. Measure their performance.
+3. Select the best model.
+
+**Critical: do not measure their performance on the test set!** Reserve the test set for final evaluation only.
+
+**Solution: a third dataset — the validation set.**
+
+```
+[ Training set ] [ Validation set ] [ Test set ]
+```
+
+For every choice of hyperparameters:
+- Train using the training set.
+- Evaluate on the validation set.
+- Select the model that worked best on validation.
+- Final performance estimate on the test set (only **once**).
+
+### Challenges
+
+**Complex optimisation spaces:**
+- Many hyperparameters are **discrete** (number of hidden layers).
+- Conditional dependencies exist.
+- **Cannot use gradient descent** for optimisation.
+- Hyperparameter space is smaller than parameter space but **still too large for exhaustive search**.
+
+**Techniques:**
+- Intelligent sampling of hyperparameter space (Bayesian optimisation, random search, grid search).
+- **Neural Architecture Search** (NAS) for structural optimisation, e.g. via neuroevolution.
+
+## Summary
+
+- Noise, bias, and variance — three additive sources of test error.
+- Double descent — classical U + a second descent past the interpolation threshold.
+- Inductive bias and the curse of dimensionality explain why over-parameterisation works.
+- Bubeck-Sellke gives a theoretical lower bound: $D$× more parameters needed for smooth interpolation.
+- Hyperparameter choice: training / validation / test split.
 
 ## See also
 
-- [[Optimisation]] — SGD's implicit bias is at the heart of this.
-- [[Regularisation]] — explicit techniques that complement implicit regularisation.
-- [[Initialisation]] — sets the starting point that SGD bias acts from.
+- [[Regularisation]] — explicit and implicit techniques (implicit regularisation is what makes overparameterisation work).
+- [[Optimisation]] — SGD's implicit bias toward flat minima.
+- [[Initialisation]] — init may encourage smoothness.
+- [[Neural Network Fundamentals]] — bias-variance basics.

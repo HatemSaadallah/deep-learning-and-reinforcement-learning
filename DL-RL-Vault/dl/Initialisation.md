@@ -1,80 +1,129 @@
 # Initialisation
 
 **Tags:** #dl #foundational
+**Source:** Lecture 5 (Tangherloni) — "Initialisation strategies"
 
-How to set the initial weights $\phi_0$ of a neural network. Critical because deep nets exhibit **vanishing** and **exploding** gradients at random/poor initialisations — the network either can't learn or diverges immediately.
+How to set the initial parameters $\phi_0$ of a neural network. Critical because poor initialisation causes **slow convergence**, **poor generalisation**, or **failed training** — particularly through **vanishing** or **exploding gradients** in deep networks.
 
-## The vanishing / exploding gradient problem
+## Lecture outline
 
-Consider a deep net with $L$ layers, activations $h_l = \sigma(W_l h_{l-1})$. The gradient signal propagated backward through $L$ layers is a product of $L$ Jacobian factors. If each factor's spectral norm is:
-- **< 1**: gradients **vanish** exponentially; early layers don't learn.
-- **> 1**: gradients **explode** exponentially; weights diverge.
+1. Parameter initialisation — why it matters
+2. Exploding vs vanishing gradients
+3. He initialisation (mathematical derivation)
+4. Comparison of initialisation techniques
+5. Role of batch normalisation
 
-Random initialisation with too-small or too-large variance triggers exactly this. The job of careful initialisation is to **preserve the variance** of activations and gradients across layers.
+## Standard building block — pre-activation analysis
 
-## Xavier / Glorot initialisation (2010)
+Consider a layer with pre-activations
+$$z^{(\ell)} = W^{(\ell)} h^{(\ell-1)} + b^{(\ell)}.$$
 
-Designed for **symmetric activations** (tanh, sigmoid).
+Assume $W^{(\ell)}_{ij}$ are i.i.d. with $\mathbb{E}[W] = 0$ and $\mathrm{Var}(W) = \sigma_W^2$, and the previous activations $h^{(\ell-1)}_j$ are i.i.d. with $\mathbb{E}[h^{(\ell-1)}_j] = 0$ (we want this) and $\mathrm{Var}(h^{(\ell-1)}_j) = \sigma_h^2$.
 
-For a linear layer $h_l = W_l h_{l-1}$ with $W_l \in \mathbb{R}^{n_{out} \times n_{in}}$:
-- Sample $W_{ij} \sim \mathcal{N}\!\left(0,\; \dfrac{2}{n_{in} + n_{out}}\right)$ (Xavier-normal),
-- or uniform on $\left[-\sqrt{6/(n_{in}+n_{out})},\, +\sqrt{6/(n_{in}+n_{out})}\right]$ (Xavier-uniform).
+Then
+$$\mathrm{Var}(z^{(\ell)}_i) = n_{in}^{(\ell)} \cdot \sigma_W^2 \cdot \sigma_h^2$$
+where $n_{in}^{(\ell)}$ is the layer's fan-in.
 
-**Derivation idea:** assume input has unit variance, activation function is linear near 0. Then $\mathrm{Var}(h_l) = n_{in} \cdot \mathrm{Var}(W_l) \cdot \mathrm{Var}(h_{l-1})$. Setting $\mathrm{Var}(W) = 1/n_{in}$ preserves forward variance. Backward pass requires $\mathrm{Var}(W) = 1/n_{out}$. Compromise: average gives $2/(n_{in} + n_{out})$.
+**Forward propagation of variance:**
+$$\sigma_h^{(\ell)\,2} \;\propto\; n_{in}^{(\ell)} \cdot \sigma_W^{(\ell)\,2} \cdot \sigma_h^{(\ell-1)\,2}.$$
 
-## He / Kaiming initialisation (2015)
+Iterating across $L$ layers, the variance is a **product**. If
+- $n_{in} \sigma_W^2 > 1$: variance **explodes** exponentially in depth.
+- $n_{in} \sigma_W^2 < 1$: variance **vanishes** exponentially in depth.
 
-Designed for **ReLU** activations. Since ReLU zeros out half the inputs in expectation, only half the variance survives. Compensate:
-$$W_{ij} \sim \mathcal{N}\!\left(0,\; \frac{2}{n_{in}}\right).$$
+Backward pass: same story for the variance of $\partial L / \partial h^{(\ell)}$, but the relevant fan is $n_{out}$.
 
-This is the **default for any ReLU-based network** (CNNs, MLPs, etc.). Variants exist for Leaky ReLU, etc.
+## Exploding gradients
+
+- Occurs when weights are initialised with **high variance**.
+- Gradients grow exponentially in deep networks.
+- **Unstable training**: updates become too large, parameters diverge, NaNs appear.
+
+## Vanishing gradients
+
+- Occurs when weights are initialised with **small variance**.
+- Gradients shrink exponentially as they propagate backward.
+- **Learning becomes ineffective** — early layers stop updating, the deep stack effectively acts shallower.
+
+## He (Kaiming) initialisation
+
+Derived for **ReLU activations**. ReLU zeros out half the inputs (in expectation, under symmetric inputs), so only half the variance survives the non-linearity:
+$$\mathrm{Var}(\mathrm{ReLU}(z)) = \tfrac{1}{2}\mathrm{Var}(z) \quad (\text{for symmetric, zero-mean } z).$$
+
+To **preserve variance across layers**, the variance equation becomes
+$$1 = \tfrac{1}{2}\, n_{in}\, \sigma_W^2 \;\Longrightarrow\; \boxed{\sigma_W^2 = \frac{2}{n_{in}}.}$$
+
+**He-normal:** $W_{ij} \sim \mathcal{N}(0,\; 2/n_{in})$.
+**He-uniform:** $W_{ij} \sim \mathcal{U}\!\bigl(-\sqrt{6/n_{in}},\, +\sqrt{6/n_{in}}\bigr)$.
+
+This is the **default initialisation for any ReLU-based network** (CNNs, MLPs, the early layers of CV pipelines).
+
+## Comparison of initialisation techniques
+
+| Initialisation | Best for |
+|---|---|
+| **Zero init** | **Not recommended** — all neurons identical → no symmetry breaking → no learning. |
+| **Random init** (e.g. $\mathcal{N}(0, 0.01)$) | Unstable for deep networks — wrong variance, exploding/vanishing. |
+| **Xavier (Glorot)** | Sigmoid, tanh — preserves variance assuming symmetric, near-linear activations. $\sigma_W^2 = 2/(n_{in} + n_{out})$. |
+| **He (Kaiming)** | ReLU, Leaky ReLU — accounts for the half-variance loss. $\sigma_W^2 = 2/n_{in}$. |
+| **Orthogonal** | Stable but expensive — preserves variance and orthogonality through forward/backward passes; needs SVD or QR decomposition. |
+
+**Orthogonal init** in detail:
+- Weights drawn from an orthogonal matrix (often QR decomposition of a random Gaussian).
+- Preserves orthogonality during forward and backward passes — variance of activations stays constant across layers exactly.
+- Maintains stable gradients.
+- **Expensive**: requires SVD or QR per layer at init time.
+
+## More advanced initialisation strategies
+
+### ConvolutionOrthogonal (Xiao et al. 2018)
+Networks of up to **10,000 layers** can be trained without residual connections, using a carefully constructed orthogonal init for convolutional layers + tanh activations. *("Dynamical Isometry and a Mean Field Theory of CNNs")*.
+
+### Fixup (Zhang et al. 2019)
+Designed for **residual networks** without normalisation. Replaces BN's role purely via initialisation (scaling residual branches appropriately).
+
+### T-Fixup (Huang et al. 2020)
+Adapted to **transformers** — stabilises training and allows **removing LayerNorm**.
+
+### DT-Fixup (Xu et al. 2021)
+Allows transformers to be trained with **smaller datasets**.
+
+## The role of batch normalisation
+
+[[Regularisation|BatchNorm]] mitigates poor initialisation effects by **normalising activations within each layer**:
+- In deep networks, BN reduces reliance on careful initialisation.
+- Reduces "internal covariate shift" — the network can learn even with suboptimal init.
+
+### BatchNorm and initialisation
+
+- With BN, weight initialisation becomes **less critical**.
+- Networks can train well even with simple initialisation.
+- Proper initialisation **still improves training efficiency**, but isn't make-or-break.
 
 ## Bias initialisation
 
-Almost always **zero**. Exception: bias in the output layer of classification can be set to $\log(\pi_c)$ for class priors $\pi_c$ — speeds early training. Bias in the **forget gate** of LSTMs is set to 1 (encourages "remember by default" behavior at init).
+Almost always **zero**. Common exceptions:
+- Output bias of classification: $\log(\pi_c)$ for class priors $\pi_c$ — speeds early training when classes are imbalanced.
+- LSTM **forget gate** bias: set to 1 (encourages "remember by default" at init).
 
-## Initialisation for specific architectures
+## Failure modes if you ignore initialisation
 
-| Architecture | Recommended | Reason |
-|---|---|---|
-| MLP with ReLU | He-normal | matches ReLU non-linearity |
-| MLP with tanh / sigmoid | Xavier-normal | matches symmetric non-linearity |
-| CNN | He-normal | usually ReLU-based |
-| Residual blocks (ResNet) | He + scale-by-$1/\sqrt{L}$ | keeps norm stable through $L$ residual blocks |
-| Transformer | T-Fixup / Xavier with $1/\sqrt{L}$ scaling | self-attention destabilizes deep stacks otherwise |
-| Embedding layers | $\mathcal{N}(0, 0.02)$ or scaled normal | scale tied to model dim $d_{\text{model}}$ |
-| LSTM | Xavier for input gates, orthogonal for recurrent | preserves the recurrent dynamics |
+- **All weights zero** → all neurons compute the same thing → identical gradients → never breaks symmetry.
+- **All weights identical** (non-zero) → same symmetry problem.
+- **Variance too large** → exploding gradients, NaNs, training diverges.
+- **Variance too small** → vanishing gradients, deep layers effectively learn nothing.
 
-## Orthogonal initialisation
+## Summary of the lecture
 
-Sample $W$ from an orthogonal matrix (via QR decomposition of a random Gaussian matrix). Preserves $\ell_2$ norm of forward and backward signals **exactly** when activations are linear. Good for very deep or RNN nets.
-
-## Layer normalisation as an initialisation crutch
-
-Adding **LayerNorm** ([[Regularisation|see Regularisation]]) or **BatchNorm** after each layer makes the network much less sensitive to initialisation. With normalisation layers, a wider range of initial weight scales works fine. Why standard transformers can use almost any reasonable init.
-
-## Initialising the last layer
-
-Output layer behavior depends on the task:
-- **Regression**: linear, zero-init bias is fine.
-- **Binary classification**: logit at zero gives $\sigma(0) = 0.5$ — symmetric init is fine. Bias to class log-prior for imbalanced data.
-- **Softmax classification**: zero-init logits give uniform predictions — slow start unless temperatures are tuned.
-
-## Failure modes if you ignore this
-
-- **All weights zero** → all neurons compute the same thing → identical gradients → never breaks symmetry. **Never use zero init for weights.**
-- **All weights identical (non-zero)** → same symmetry problem.
-- **Variance too large** → activations saturate (sigmoid → ±1), gradients vanish from saturated units.
-- **Variance too small** → effective network depth shrinks; deep layers compute zero.
-
-## What "warmup" learning rate is doing
-
-Warmup gradually increases the learning rate over the first $w$ steps. This compensates for the fact that early in training, gradients are unreliable (the network hasn't found its "preferred direction" yet) and large LR can wreck the initialisation.
-
-For transformers, warmup interacts with initialisation: small init + warmup is the standard recipe to keep early-training dynamics stable.
+- Parameter initialisation
+- Exploding vs vanishing gradients
+- He initialisation (variance-preservation derivation for ReLU)
+- Other initialisers (Xavier, Orthogonal, Fixup family)
+- Role of batch normalisation
 
 ## See also
 
-- [[Optimisation]] — how the network moves *from* the initial point.
-- [[Regularisation]] — BatchNorm/LayerNorm reduce sensitivity to init.
-- [[Transformer]] — has its own initialisation gotchas.
+- [[Optimisation]] — what happens *from* the initial point.
+- [[Regularisation]] — BatchNorm / LayerNorm reduce sensitivity to init.
+- [[Transformer]] — transformers have their own init gotchas (T-Fixup).
+- [[Neural Network Fundamentals]] — backprop and the chain rule that produces vanishing/exploding gradients.

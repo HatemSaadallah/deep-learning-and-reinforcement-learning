@@ -1,116 +1,223 @@
 # Optimisation (Deep Learning)
 
 **Tags:** #dl #optimisation #foundational
+**Source:** Lecture 4 (Tangherloni) — "Fitting the models"
 
-How to **fit** the parameters $\phi$ of a neural network — minimize the empirical loss
-$$L[\phi] = \frac{1}{N}\sum_{i=1}^N \ell_i\bigl(f(x_i; \phi),\, y_i\bigr).$$
+How to **fit** the parameters $\phi \in \mathbb{R}^D$ of a neural network — minimize the empirical loss
+$$y_i = g[x_i] + \varepsilon_i, \qquad L[\phi] = \frac{1}{N}\sum_{i=1}^N \ell_i\bigl[f[x_i, \phi],\, y_i\bigr].$$
 
-Unlike classical convex optimisation, the loss landscape of a deep net is **non-convex**, **non-smooth**, and **astronomically high-dimensional** ($\phi \in \mathbb{R}^D$ with $D$ in the millions to billions).
+This is "learning the network's parameters", "training", or "fitting the model".
+
+## General framework of optimisation
+
+An **optimisation problem** is a triplet
+$$\mathcal{P} = (S, c, \mathcal{N})$$
+- $S$: search space of admissible configurations / candidate solutions.
+- $c: S \to \mathbb{R}$: objective (aka cost or fitness) function.
+- $\mathcal{N}: S \to 2^S$: neighbourhood structure (local connectivity).
+
+The **fitness landscape** $\mathcal{L} = (S, \mathcal{N}, c)$ separates:
+- **Topology** ($\mathcal{N}$): how points are connected.
+- **Geometry / morphology** ($c$): shape of hills and valleys.
 
 ## Landscape vocabulary
 
-- **Local minimum:** $L(\phi^*) \leq L(\phi)$ for $\phi$ in a neighborhood.
-- **Global minimum:** $L(\phi^*) \leq L(\phi)$ everywhere.
-- **Saddle point:** $\nabla L = 0$, but Hessian has both positive and negative eigenvalues — increases in some directions, decreases in others.
-- **Critical points:** any point with $\nabla L = 0$ (minima, maxima, saddles).
-- **Basin of attraction:** set of $\phi_0$ that converge to a given minimum under gradient descent.
-- **Test for convexity:** Hessian $H[\phi]$ positive semi-definite everywhere (all eigenvalues $\geq 0$). NN loss landscapes **fail** this test almost everywhere.
+- $x^*$ is a **local minimum** if $c(x^*) \leq c(x)$ for all $x \in \mathcal{N}(x^*)$.
+- $x^*$ is the **global minimum** if $c(x^*) \leq c(x)$ for all $x \in S$.
+- ⚠ Here $x$ denotes a candidate solution (the *parameters*), **not** the NN input.
 
-## Two empirical surprises of deep learning loss landscapes
+**Topology can be studied via:**
+- **Critical points** ($\nabla c = 0$): minima, maxima, **saddle points**.
+- **Morse theory**: links the number of critical points and the topology of level sets.
+- **Basins of attraction**: sets of points converging to the same local minimum under local descent.
 
-1. **Saddle points are far more common than local minima** in high dimensions. Random matrix theory: for a Hessian with random eigenvalue signs, the probability that all $D$ are positive (a minimum) is $\sim 2^{-D}$ — vanishing for big $D$. → Most $\nabla L = 0$ points are saddles, not minima.
-2. **Skip connections (ResNet) smooth out the landscape dramatically.** ResNet-56 without skip connections has a wildly bumpy loss surface; *with* them it becomes nearly convex around the minimum (Li et al. 2018, "Visualizing the Loss Landscape").
+## Convexity tests
 
-## Gradient flow → gradient descent (discretisation)
+- **1D:** $c$ is convex iff $c''(x) \geq 0$ everywhere.
+- **General:** $c$ is convex iff the **Hessian** $H[\phi]$ is positive-semidefinite (all eigenvalues $\geq 0$) at every $\phi$.
 
-**Continuous-time view:** negative gradient flow
-$$\dot \phi = -\nabla_\phi L \quad\Longrightarrow\quad \frac{dL}{dt} = -\|\nabla_\phi L\|^2 \leq 0.$$
-$L$ decreases monotonically along trajectories.
+NN loss landscapes are **non-convex** almost everywhere.
 
-**Discretisation (Euler integration)** with step size $h$ gives **gradient descent**:
-$$\phi^t = \phi^{t-1} - h \nabla_\phi L(\phi^{t-1}).$$
+## Parameter vs function space
 
-The discrete dynamics can:
+Define
+$$\Phi: \Theta \to \mathcal{F}, \qquad \Phi(\phi) = f[\,\cdot\,, \phi].$$
+- $\Theta = \mathbb{R}^D$: **parameter space**.
+- $\mathcal{F} = \{f[\,\cdot\,, \phi] : \mathcal{X} \to \mathcal{Y} \mid \phi \in \Theta\}$: **function space**.
+
+**Optimisation happens in parameter space, but generalisation is a property of the function space.**
+
+**Different parameterisations can lead to the same function:**
+$$f_{\theta_1} = f_{\theta_2} \;\nRightarrow\; \theta_1 = \theta_2.$$
+
+This is why two networks with very different weights can compute identical functions, and conversely why two minima at the same loss can describe different functions.
+
+## Landscape characteristics of NNs
+
+1. **Highly non-convex** but with **connected regions of low loss**.
+2. **Symmetries** (neuron permutations, scaling under ReLU homogeneity) create **degenerate minima** — entire manifolds of equivalent solutions.
+3. **Overparameterisation tends to smooth the landscape** — see [[Overparameterisation]].
+
+ResNet-56 illustrates dramatically: **with skip connections** the loss landscape is nearly convex around the minimum; **without** them, wildly bumpy (Li et al. 2018).
+
+## Gradient flow → gradient descent
+
+**Negative gradient flow (continuous):**
+$$\dot\phi = -\nabla_\phi L.$$
+This **decreases $L$ monotonically:**
+$$\frac{\partial L}{\partial t} = \nabla_\phi L^\top \dot\phi = -\|\nabla_\phi L\|^2 \leq 0.$$
+
+**Discretisation via Euler integration** with step $h$:
+$$\phi^t = \phi^{t-1} - h\, \nabla_\phi L(\phi^{t-1}).$$
+This is **gradient descent**.
+
+### Challenge: discretisation
+
+The discrete update can:
 - **Converge** (small enough $h$),
 - be **unstable** (oscillations, moderate $h$),
 - **diverge** (large $h$).
 
-For quadratic objectives the stability threshold is known: $h < 2/L_{\max}$ where $L_{\max}$ is the largest Hessian eigenvalue. For NNs it's far more complex and the safe $h$ has to be found empirically.
+For quadratic objectives the threshold is known. For NNs it's far more complex — the safe $h$ has to be found empirically.
 
-## Full-batch, mini-batch, stochastic GD
+## Sharp vs flat minima — and the flatness/generalisation debate
 
-| | Per-step gradient | Memory | Noise |
-|---|---|---|---|
-| **Full-batch GD** | $\nabla L$ over all $N$ examples | high | none |
-| **Mini-batch SGD** | $\nabla \hat L$ over $B \ll N$ examples | low | moderate |
-| **Stochastic GD** | $\nabla \ell_i$ on a single example | minimal | high |
+Convergence to **flat minima** has been linked to better generalisation in DL — but this is **debated**.
 
-**Mini-batch SGD** is the workhorse — its gradient noise acts as **implicit regularisation** (favors flat minima which generalize better, see [[Overparameterisation]]). $B$ typically 32–512.
+**Two definitions of flatness:**
+1. **Gradient norms** — measures the steepness of the loss landscape near the minimum.
+2. **Hessian eigenvalues** — smaller eigenvalues indicate a flatter minimum.
+
+**Generalisation:** how well the model performs on unseen data.
+
+### The Dinh et al. 2017 caveat ("Sharp Minima Can Generalize for Deep Nets")
+
+NN **reparametrisation properties:** transformations of parameter values that **don't alter functional behaviour** (input-output mapping preserved). These reveal symmetries and invariances in parameter space.
+
+**These reparametrisations can dramatically change sharpness without changing the function** — you can construct equivalent NNs with hugely varying sharpness, generalising equally well.
+
+→ "Flat = good generalisation" is at best a parameter-space heuristic; the function-space view doesn't share it. Modern theory treats "flatness" as one of many proxies, not a definitive predictor.
+
+## Stochastic Gradient Descent (SGD)
+
+**Motivation:**
+- Deal with large datasets.
+- Avoid the slow training of full-batch GD.
+- Early in training, **a full gradient update is unnecessary** — you can learn faster with smaller batches.
+
+**Recipe.** Replace $\nabla L$ with an estimate from a **mini-batch** of size $B$:
+$$\phi^t = \phi^{t-1} - h\, \nabla_\phi \hat L_B(\phi^{t-1}),\qquad \hat L_B(\phi) = \frac{1}{B}\sum_{i \in \text{batch}_t} \ell_i.$$
+
+**Why SGD is the main workhorse of DL:**
+- Improved generalisation performance.
+- Avoids bad local minima and saddle points (the noise pushes off them).
+- Empirically leads to **flatter minima**.
 
 ## Momentum
 
-Plain SGD oscillates in ravine-like regions. **Momentum** accumulates a velocity:
-$$v_t = \mu\, v_{t-1} + \nabla L(\phi_{t-1}), \qquad \phi_t = \phi_{t-1} - \eta\, v_t.$$
-- $\mu \in [0, 1)$ (typically 0.9): friction coefficient.
-- Damps oscillations across the curvature, accelerates along low-curvature directions.
-
-**Nesterov's accelerated gradient (NAG)** evaluates the gradient at the look-ahead point: $\nabla L(\phi_{t-1} - \eta \mu v_{t-1})$. Theoretically optimal for smooth convex problems.
-
-## Adaptive learning rates
-
-The idea: **scale the learning rate per parameter**, based on the history of its gradients.
-
-### AdaGrad (Duchi et al. 2011)
-$$G_t = G_{t-1} + g_t^2, \qquad \phi_t = \phi_{t-1} - \frac{\eta}{\sqrt{G_t} + \varepsilon} g_t.$$
-Parameters that have received large gradients get smaller updates. Works well for sparse problems; **decays too aggressively** for deep learning.
-
-### RMSProp (Hinton, unpublished)
-Exponential moving average instead of cumulative sum:
-$$G_t = \beta G_{t-1} + (1-\beta) g_t^2, \qquad \phi_t = \phi_{t-1} - \frac{\eta}{\sqrt{G_t} + \varepsilon} g_t.$$
-Solves AdaGrad's decay issue.
-
-### Adam (Kingma & Ba 2015) — the de facto default
-Combines momentum + RMSProp + bias correction:
+A modification to SGD that adds a momentum term — a **weighted combination of the current gradient and the previous step direction**:
 $$\begin{aligned}
-m_t &= \beta_1 m_{t-1} + (1-\beta_1) g_t,\quad &\hat m_t &= \frac{m_t}{1-\beta_1^t}\\
-v_t &= \beta_2 v_{t-1} + (1-\beta_2) g_t^2,\quad &\hat v_t &= \frac{v_t}{1-\beta_2^t}\\
-\phi_t &= \phi_{t-1} - \eta\, \frac{\hat m_t}{\sqrt{\hat v_t} + \varepsilon}
+m^t &= \beta\, m^{t-1} + \nabla L(\phi^{t-1}) \\
+\phi^t &= \phi^{t-1} - h\, m^t
+\end{aligned}$$
+- $\beta \in [0, 1)$ controls how much past direction matters (typically $0.9$).
+
+Damps oscillations across high-curvature directions, accelerates along low-curvature ones.
+
+### Nesterov accelerated momentum (NAG)
+
+Evaluate the gradient at the **look-ahead point** rather than the current point:
+$$m^t = \beta m^{t-1} + \nabla L(\phi^{t-1} - h\beta m^{t-1}).$$
+
+Theoretically optimal first-order method for smooth convex problems.
+
+## Adam — Adaptive Moment Estimation
+
+Combines momentum + per-parameter adaptive learning rates + bias correction (Kingma & Ba 2015).
+
+$$\begin{aligned}
+m^t &= \beta_1 m^{t-1} + (1-\beta_1)\, g^t,\quad &\hat m^t &= \frac{m^t}{1-\beta_1^t}\\
+v^t &= \beta_2 v^{t-1} + (1-\beta_2)\, (g^t)^2,\quad &\hat v^t &= \frac{v^t}{1-\beta_2^t}\\
+\phi^t &= \phi^{t-1} - h\, \frac{\hat m^t}{\sqrt{\hat v^t} + \varepsilon}
 \end{aligned}$$
 
-Defaults: $\beta_1 = 0.9, \beta_2 = 0.999, \varepsilon = 10^{-8}, \eta = 10^{-3}$.
+Defaults: $\beta_1 = 0.9, \beta_2 = 0.999, \varepsilon = 10^{-8}, h = 10^{-3}$.
 
-**AdamW** (Loshchilov & Hutter 2019): decoupled weight decay (don't apply weight decay through the $\hat v$ scaling). De facto default for modern transformers.
+**AdamW** (Loshchilov & Hutter 2019): decoupled weight decay — the de facto default for modern transformers.
 
-## Learning rate schedules
+## Backpropagation
 
-Static $\eta$ rarely works for thousands of epochs. Common schedules:
+**Algorithm** for computing $\nabla_\phi L$ efficiently.
 
-- **Step decay:** $\eta \leftarrow \eta / 10$ every $k$ epochs.
-- **Cosine annealing:** $\eta_t = \eta_{\min} + \tfrac{1}{2}(\eta_{\max} - \eta_{\min})(1 + \cos(\pi t/T))$.
-- **Warmup + cosine:** linearly increase $\eta$ for the first $w$ steps, then cosine decay. Standard for transformers (helps stabilize training in the early high-curvature phase).
-- **Cyclical LR (Smith 2017):** triangular waveform, can find super-convergence regimes.
+**Forward pass:** compute and **store** all intermediate activations $h^{(0)}, \dots, h^{(L)}$, the loss.
 
-## Second-order methods (and why we don't use them)
+**Backward pass:** apply the chain rule layer-by-layer:
+$$\frac{\partial L}{\partial h^{(\ell-1)}} = \Bigl(\frac{\partial h^{(\ell)}}{\partial h^{(\ell-1)}}\Bigr)^\top \frac{\partial L}{\partial h^{(\ell)}},\qquad \frac{\partial L}{\partial W^{(\ell)}} = \frac{\partial L}{\partial h^{(\ell)}} (h^{(\ell-1)})^\top.$$
 
-Newton: $\phi \leftarrow \phi - H^{-1} g$. Quadratically convergent for convex $f$. **Infeasible for deep nets** — $H$ has $D^2$ entries (terabytes for big models), and Hessian inversion is $O(D^3)$.
+### Pros and cons
 
-Practical compromises:
-- **L-BFGS:** quasi-Newton, builds low-rank Hessian approximation. Works only for small/medium nets in full-batch.
-- **K-FAC:** Kronecker-factored Hessian approximation. Used for second-order natural gradient in RL (e.g. TRPO uses similar ideas — see [[TRPO Surrogate Objective]]).
-- **Shampoo / Sophia:** modern adaptive second-order methods becoming competitive with AdamW.
+| Pros | Cons |
+|---|---|
+| **Extremely efficient** — only matrix multiplies (the most computationally demanding step) and ReLU thresholding | **Memory-hungry** — all forward-pass intermediates must be stored, limiting model size |
+| Easily parallelisable across batches | **Mainly sequential** along the chain — problematic if the model can't fit on one machine |
 
-## Key intuitions to retain
+## Algorithmic differentiation (autograd)
 
-- **Loss landscape is non-convex but practically tractable** due to gradient noise + over-parameterisation + good architectures (residual connections).
-- **Saddle points dominate critical-point counts** in high dimensions but SGD escapes them naturally (any non-zero gradient noise eventually pushes off the saddle along a descent direction).
-- **Adam is the default**, learning rate of $10^{-3}$ to $10^{-4}$, warmup + cosine schedule. Tweak only if it doesn't work.
-- **Batch size and learning rate scale together** — larger batches need larger LR (linear scaling rule).
-- **Why does it generalise?** Implicit regularisation from SGD noise + over-parameterisation. See [[Overparameterisation]].
+Modern DL frameworks compute derivatives **automatically**:
+- You specify the model and loss.
+- Each component knows how to compute its own derivative.
+- The framework tracks the network's operation sequence (the **computational graph**).
+- It can then compute forward and backward passes via the chain rule.
+
+**Works with branches** as long as the computational graph is acyclic. Generalises beyond NNs — autograd works on **any differentiable computation graph**.
+
+## Computational optimisations
+
+**Memory:**
+- **Gradient checkpointing** — store only selected activations, recompute the rest during backward.
+- **In-place operations** where possible.
+- Batch-size tuning.
+
+**Computation:**
+- Parallelisation across batches.
+- **Fused operations** (e.g. matmul + bias addition).
+- **Mixed-precision training** (fp16/bf16).
+- Optimise memory access patterns.
+
+## PyTorch recipe
+
+```python
+# Random parameters
+w = torch.randn(d, requires_grad=True)
+# Fixed random input/target
+x = torch.randn(N, d)
+y = torch.randn(N)
+# Optimiser
+optimizer = torch.optim.SGD([w], lr=0.01)
+
+# Training loop
+for step in range(T):
+    optimizer.zero_grad()
+    y_hat = x @ w
+    loss = ((y_hat - y) ** 2).mean()
+    loss.backward()         # autograd computes ∇_w loss
+    optimizer.step()        # SGD update
+```
+
+**Autograd works on any differentiable computation graph** — you don't need to build a neural network.
+
+## Summary of the lecture
+
+1. Optimisation in deep learning (landscape, framework).
+2. **Sharp vs flat minima** — flatness and generalisation (debated, see Dinh 2017).
+3. Gradient Descent and Stochastic Gradient Descent.
+4. Momentum and Adam.
+5. Backpropagation + algorithmic differentiation.
 
 ## See also
 
 - [[Initialisation]] — getting started in the right region of $\phi$-space.
-- [[Regularisation]] — explicit techniques (L2, dropout, batch norm).
-- [[Overparameterisation]] — the modern theory of why this works at all.
-- [[Convexity]] (RL vault) — the structure that's *missing* from DL loss landscapes.
-- [[OGD Regret Bound]] — what we lose without convexity (online setting).
+- [[Regularisation]] — explicit and implicit techniques.
+- [[Overparameterisation]] — why this all works empirically.
+- [[Neural Network Fundamentals]] — backprop derivation, MLE view of losses.
+- [[Convexity]] (RL vault) — the structure that's missing from DL loss landscapes.

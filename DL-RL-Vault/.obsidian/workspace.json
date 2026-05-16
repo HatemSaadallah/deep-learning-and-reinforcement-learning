@@ -185,6 +185,10 @@
   },
   "active": "6dfaed0a3d63df86",
   "lastOpenFiles": [
+    "dl/Overparameterisation.md.tmp.47571.e13105432e77",
+    "dl/Regularisation.md.tmp.47571.1f6169693025",
+    "dl/Initialisation.md.tmp.47571.ca331e7403a6",
+    "dl/Optimisation.md.tmp.47571.ea727b6ebcdb",
     "dl/Transformer.md",
     "Cheat Sheet.md",
     "_meta/MOC - Map of Content.md.tmp.47571.5af87a354daf",
@@ -214,13 +218,9 @@
     "rl/proofs/FTRL Stability and Regret.md",
     "rl/proofs/ETC Regret Analysis.md",
     "rl/proofs",
-    "rl/online-learning/Regret.md",
     "rl/online-learning",
     "rl/foundations",
     "rl/bandits",
-    "rl/deep-rl",
-    "rl",
-    "_meta/MOC - Map of Content.md.tmp.47571.0d8a64c6f0b7",
     "Untitled.canvas"
   ]
 }

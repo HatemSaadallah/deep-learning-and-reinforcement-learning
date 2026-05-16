@@ -8,6 +8,7 @@ Top-level entry point into the vault. Use the graph view (`Ctrl+G`) to see the l
 - [[Regret]]
 - [[Convexity]]
 - [[Hoeffding Inequality]]
+- [[Clean Event]]
 - [[KL Divergence]]
 - [[Pinskers Inequality]]
 - [[Yaos Principle]]
@@ -15,6 +16,7 @@ Top-level entry point into the vault. Use the graph view (`Ctrl+G`) to see the l
 - [[Three-point Equality]]
 - [[Euclidean Mirror Descent Lemma]]
 - [[Exp-Concavity]]
+- [[Optimism Principle]]
 
 ## Online learning algorithms
 
@@ -31,7 +33,10 @@ Top-level entry point into the vault. Use the graph view (`Ctrl+G`) to see the l
 - [[Stochastic Bandits]] *(main hub)*
 - [[Sub-optimality Gap]]
 - [[Regret Decomposition Lemma]]
+- [[Epsilon-Greedy]]
 - [[Explore-Then-Commit]]
+- [[UCB1]]
+- [[Thompson Sampling]]
 - [[Best-Arm Identification]]
 - [[Bandit Lower Bound]]
 - [[Contextual Bandit]] — bridge to RL

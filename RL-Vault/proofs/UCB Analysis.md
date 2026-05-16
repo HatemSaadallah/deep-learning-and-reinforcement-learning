@@ -96,9 +96,61 @@ $$R^T \leq 2 \sqrt{8 K T \log T} + O(K) = O\!\left(\sqrt{KT \log T}\right). \qqu
 - **The split by $\epsilon$ converts instance-dep → instance-indep.** Same trick generalizes throughout bandit theory.
 - **Tight up to log factors:** $\sqrt{KT}$ matches the [[Bandit Lower Bound]].
 
+## Lecture-style proof (Celli, slides 8–13) — via the [[Clean Event]]
+
+Equivalent rate, cleaner structure. The proof Celli expects on the exam.
+
+**Setup.** Define
+$$\mathcal{G} \;=\; \Bigl\{\, |\mu(a) - \hat\mu_t(a)| \leq \sqrt{\tfrac{2 \log T}{N_t(a)}} \quad \forall a, t \,\Bigr\}.$$
+By the [[Clean Event]] lemma, $\Pr[\mathcal{G}] \geq 1 - 1/T$.
+
+**Lemma (#pulls of suboptimal arm, on $\mathcal{G}$):**
+$$N_{T+1}(a) \;\leq\; \frac{8 \log T}{\Delta_a^2} + 1.$$
+
+*Proof.* Let $t$ be the **last** round on which arm $a$ is played. Since $a_t = a$:
+$$\mathrm{UCB}_{t-1}(a) \;\geq\; \mathrm{UCB}_{t-1}(a^*).$$
+
+On $\mathcal{G}$: $\hat\mu_{t-1}(a^*) \geq \mu^* - \sqrt{2 \log T / N_{t-1}(a^*)}$, so
+$$\mathrm{UCB}_{t-1}(a^*) = \hat\mu_{t-1}(a^*) + \sqrt{\tfrac{2 \log T}{N_{t-1}(a^*)}} \;\geq\; \mu^*.$$
+
+On $\mathcal{G}$: $\hat\mu_{t-1}(a) \leq \mu(a) + \sqrt{2 \log T / N_{t-1}(a)}$, so
+$$\mathrm{UCB}_{t-1}(a) = \hat\mu_{t-1}(a) + \sqrt{\tfrac{2 \log T}{N_{t-1}(a)}} \;\leq\; \mu(a) + 2\sqrt{\tfrac{2 \log T}{N_{t-1}(a)}}.$$
+
+Chaining: $\mu^* \leq \mu(a) + 2\sqrt{2 \log T / N_{t-1}(a)}$, i.e.
+$$\Delta_a \leq 2\sqrt{\tfrac{2 \log T}{N_{t-1}(a)}} \;\Longrightarrow\; N_{t-1}(a) \leq \frac{8 \log T}{\Delta_a^2}.$$
+
+Since $t$ is the last play, $N_{T+1}(a) = N_t(a) = N_{t-1}(a) + 1 \leq 8 \log T / \Delta_a^2 + 1$. $\square$
+
+**Instance-dependent bound.** Split by whether $\mathcal{G}$ holds:
+
+- **On $\mathcal{G}$** (prob $\geq 1 - 1/T$): by [[Regret Decomposition Lemma]] + lemma above,
+$$R^T \;\leq\; \sum_a \Delta_a \cdot N_{T+1}(a) \;\leq\; 6 \log T \sum_a \frac{1}{\Delta_a}.$$
+- **On $\mathcal{G}^c$** (prob $\leq 1/T$): trivially $R^T \leq T$.
+
+Combine:
+$$\mathbb{E}[R^T] \leq \frac{1}{T} \cdot T + \Bigl(1 - \frac{1}{T}\Bigr) \cdot 6 \log T \sum_a \frac{1}{\Delta_a} \;\leq\; 1 + 6 \log T \sum_{a : \Delta_a > 0} \frac{1}{\Delta_a} \;=\; O\!\left(\log T \sum_a \tfrac{1}{\Delta_a}\right). \quad \square$$
+
+**Instance-independent bound.** Pick threshold $\beta = \sqrt{K \log T / T}$. Split arms:
+
+- **Arms with $\Delta_a \leq \beta$** (call them "near-optimal"): on $\mathcal{G}$, total regret from them is
+$$\sum_{a:\Delta_a \leq \beta} \Delta_a N_{T+1}(a) \leq \beta \sum_a N_{T+1}(a) = \beta T = \sqrt{K T \log T}.$$
+- **Arms with $\Delta_a > \beta$**: each contributes
+$$\Delta_a \cdot N_{T+1}(a) \leq \Delta_a \cdot \frac{8 \log T}{\Delta_a^2} = \frac{8 \log T}{\Delta_a} < \frac{8 \log T}{\beta} = 8 \sqrt{T \log T / K}.$$
+At most $K$ such arms: total $\leq 8K \sqrt{T \log T / K} = 8\sqrt{KT \log T}$.
+
+Combined: $R^T = O(\sqrt{KT \log T})$. $\square$
+
+**Why this proof is more memorable than the textbook three-event one above:**
+- A single high-probability event $\mathcal{G}$ replaces three per-round events.
+- The bound on $N_{T+1}(a)$ is **deterministic on $\mathcal{G}$**, not in expectation.
+- The threshold $\beta = \sqrt{K \log T / T}$ for the instance-independent bound is chosen *upfront* from the problem geometry rather than optimized after the fact.
+
 ## See also
 
+- [[Clean Event]] — the lemma that powers the lecture-style proof.
 - [[Regret Decomposition Lemma]] — converts $\mathbb{E}[N_a]$ to regret.
 - [[Hoeffding Inequality]] — the concentration tool.
 - [[Bandit Lower Bound]] — the $\Omega(\sqrt{KT})$ that this matches.
 - [[Explore-Then-Commit]] — strictly worse by $T^{1/6}$ in the exponent of $T$.
+- [[UCB1]] — the algorithm note.
+- [[Optimism Principle]] — the general design principle.

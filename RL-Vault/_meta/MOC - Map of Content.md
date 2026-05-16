@@ -65,6 +65,13 @@ Top-level entry point into the vault. Use the graph view (`Ctrl+G`) to see the l
 - [[Policy Gradient Theorem]]
 - [[TRPO Surrogate Objective]]
 
+## Mock exams
+
+→ [[INDEX|Mocks index]]
+- [[2024-05 RL Final Exam]] — full RL final, 16 questions, 31 pts
+- [[2025-03 DL Mock]] — DL-only mock, 13 questions, 31 pts
+- [[Cheat Sheet]] — full-course concept map (handwritten reference)
+
 ## Course timeline (Bocconi RL 20876)
 
 - ✅ **Part 2** (2026-03-27, Celli): Stochastic bandits — ETC, $\Omega(\sqrt{KT})$ lower bound. See [[Stochastic Bandits]].
